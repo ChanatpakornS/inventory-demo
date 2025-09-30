@@ -1,0 +1,20 @@
+version: "3.8"
+
+name: invoice
+
+volumes:
+  invoice-pgsql:
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: idb
+      POSTGRES_USER: idb
+      POSTGRES_PASSWORD: idb
+    volumes:
+      - invoice-pgsql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
