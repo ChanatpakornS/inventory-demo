@@ -10,5 +10,5 @@ type Invoice struct {
 	Name   string  `gorm:"size:200;not null" json:"name"`
 	Status string  `gorm:"type:text" json:"status"`
 	Method string  `gorm:"size:200;not null" json:"method"`
-	Amount float64 `gorm:"not null" json:"amount"`
+	Amount float32 `gorm:"not null" json:"amount"`
 }

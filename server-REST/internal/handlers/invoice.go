@@ -1,12 +1,26 @@
 package handlers
 
 import (
-	model "github.com/ChanatpakornS/inventory-demo/internal/models"
+	model "github.com/ChanatpakornS/inventory-demo/REST/internal/models"
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
 )
 
-func GetAllInvoices(ctx fiber.Ctx, db *gorm.DB) error {
+type InvoiceHandler interface {
+	GetAllInvoices(ctx fiber.Ctx, db *gorm.DB) error
+	GetInvoiceByID(ctx fiber.Ctx, db *gorm.DB) error
+	CreateInvoice(ctx fiber.Ctx, db *gorm.DB) error
+	UpdateInvoice(ctx fiber.Ctx, db *gorm.DB) error
+	DeleteInvoice(ctx fiber.Ctx, db *gorm.DB) error
+}
+
+type invoiceHandler struct{}
+
+func NewInvoiceHandler() *invoiceHandler {
+	return &invoiceHandler{}
+}
+
+func (i *invoiceHandler) GetAllInvoices(ctx fiber.Ctx, db *gorm.DB) error {
 	var Invoices []model.Invoice
 
 	result := db.Find(&Invoices)
@@ -20,7 +34,7 @@ func GetAllInvoices(ctx fiber.Ctx, db *gorm.DB) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(Invoices)
 }
-func GetInvoiceByID(ctx fiber.Ctx, db *gorm.DB) error {
+func (i *invoiceHandler) GetInvoiceByID(ctx fiber.Ctx, db *gorm.DB) error {
 	var (
 		Invoice model.Invoice
 		param   = struct {
@@ -46,7 +60,7 @@ func GetInvoiceByID(ctx fiber.Ctx, db *gorm.DB) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(Invoice)
 }
-func CreateInvoice(ctx fiber.Ctx, db *gorm.DB) error {
+func (i *invoiceHandler) CreateInvoice(ctx fiber.Ctx, db *gorm.DB) error {
 	var Invoice model.Invoice
 	if err := ctx.Bind().Body(&Invoice); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -62,7 +76,7 @@ func CreateInvoice(ctx fiber.Ctx, db *gorm.DB) error {
 
 	return ctx.Status(fiber.StatusCreated).JSON(Invoice)
 }
-func UpdateInvoice(ctx fiber.Ctx, db *gorm.DB) error {
+func (i *invoiceHandler) UpdateInvoice(ctx fiber.Ctx, db *gorm.DB) error {
 	var (
 		Invoice model.Invoice
 		param   = struct {
@@ -99,7 +113,7 @@ func UpdateInvoice(ctx fiber.Ctx, db *gorm.DB) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(Invoice)
 }
-func DeleteInvoice(ctx fiber.Ctx, db *gorm.DB) error {
+func (i *invoiceHandler) DeleteInvoice(ctx fiber.Ctx, db *gorm.DB) error {
 	var (
 		Invoice model.Invoice
 		param   = struct {
@@ -114,11 +128,20 @@ func DeleteInvoice(ctx fiber.Ctx, db *gorm.DB) error {
 	}
 	id := param.ID
 
+	result := db.First(&Invoice, id)
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Invoice not found",
+		})
+	}
+
 	if err := db.Delete(&Invoice, id).Error; err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Could not delete Invoice",
 		})
 	}
 
-	return ctx.SendStatus(fiber.StatusNoContent)
+	ctx.JSON(result)
+
+	return ctx.Status(fiber.StatusOK).JSON(result)
 }

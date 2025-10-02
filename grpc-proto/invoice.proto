@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package mcpserver;
+
+option go_package = "grpc-proto/invoice;invoice";
+
+service InvoiceService {
+    // GET
+    rpc GetAllInvoices (GetAllInvoicesRequest) returns (GetAllInvoicesResponse);
+    rpc GetInvoiceByID (GetInvoiceRequest) returns (GetInvoiceResponse);
+
+    // POST
+    rpc CreateInvoice (CreateInvoiceRequest) returns (CreateInvoiceResponse);
+
+    // PUT
+    rpc UpdateInvoice (UpdateInvoiceRequest) returns (UpdateInvoiceResponse);
+
+    // DELETE
+    rpc DeleteInvoice (DeleteInvoiceRequest) returns (DeleteInvoiceResponse);
+}
+
+// MODELS
+message Invoice {
+    string id = 1;
+    string name = 2;
+    string status = 3;
+    string method = 4;
+    float amount = 5;
+}
+
+// REQUEST MSGS
+message GetAllInvoicesRequest {}
+message GetInvoiceRequest {
+    string id = 1;
+}
+message CreateInvoiceRequest {
+    string name = 1;
+    string status = 2;
+    string method = 3;
+    float amount = 4;
+}
+message UpdateInvoiceRequest {
+    string id = 1;
+    optional string name = 2;
+    optional string status = 3;
+    optional string method = 4;
+    optional float amount = 5;
+}
+message DeleteInvoiceRequest {
+    string id = 1;
+}
+
+// RESPONSE MSGS
+message GetAllInvoicesResponse {
+    repeated Invoice invoices = 1;
+}
+message GetInvoiceResponse {
+    Invoice invoice = 1;
+}
+message CreateInvoiceResponse {
+    Invoice invoice = 1;
+}
+message UpdateInvoiceResponse {
+    Invoice invoice = 1;
+}
+message DeleteInvoiceResponse {
+    Invoice invoice = 1;
+}

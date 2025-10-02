@@ -10,8 +10,8 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/ChanatpakornS/inventory-demo/internal/handlers"
-	model "github.com/ChanatpakornS/inventory-demo/internal/models"
+	"github.com/ChanatpakornS/inventory-demo/REST/internal/handlers"
+	model "github.com/ChanatpakornS/inventory-demo/REST/internal/models"
 )
 
 const (
@@ -26,25 +26,27 @@ func main() {
 	app := fiber.New()
 	db := setUpDatabase(host, port, user, password, dbname)
 
+	invoiceHandler := handlers.NewInvoiceHandler()
+
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{"Origin, Content-Type, Accept"},
 	}))
 	app.Get(healthcheck.LivenessEndpoint, healthcheck.New())
 	app.Get("/invoices", func(c fiber.Ctx) error {
-		return handlers.GetAllInvoices(c, db)
+		return invoiceHandler.GetAllInvoices(c, db)
 	})
 	app.Get("/invoices/:id", func(c fiber.Ctx) error {
-		return handlers.GetInvoiceByID(c, db)
+		return invoiceHandler.GetInvoiceByID(c, db)
 	})
 	app.Post("/invoices", func(c fiber.Ctx) error {
-		return handlers.CreateInvoice(c, db)
+		return invoiceHandler.CreateInvoice(c, db)
 	})
 	app.Put("/invoices/:id", func(c fiber.Ctx) error {
-		return handlers.UpdateInvoice(c, db)
+		return invoiceHandler.UpdateInvoice(c, db)
 	})
 	app.Delete("/invoices/:id", func(c fiber.Ctx) error {
-		return handlers.DeleteInvoice(c, db)
+		return invoiceHandler.DeleteInvoice(c, db)
 	})
 
 	log.Fatal(app.Listen(":8080"))
