@@ -1,6 +1,6 @@
 # Invoice playground
 
-TBH, I don't know what is invoices are, just used the words from table from shadCN and still develop until now!
+TBH, I don't know what is invoices are, just used the words from table from shadCN
 
 > [!IMPORTANT]
 > Why not turbo repo? IDK what it is and how to use it. K?
