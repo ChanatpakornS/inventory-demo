@@ -7,7 +7,7 @@ TBH, I don't know what is invoices are, just used the words from table from shad
 
 # Service
 
-This repository cosisted of 
+This repository consisted of 
  - server gRPC (connected with the MCP-server)
  - server REST (connected to the app interface)
  - app (stupid table only for 'GET', 'POST' method)
